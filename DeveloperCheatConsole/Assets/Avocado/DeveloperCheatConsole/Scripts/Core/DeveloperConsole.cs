@@ -18,6 +18,12 @@ namespace Avocado.DeveloperCheatConsole.Scripts.Core {
         }
 
         private void GenerateBuildInCommands() {
+            var allCommands = new AllCommands();
+            _commands = allCommands.GenerateCommands();
+            AddBuildInCommands();
+        }
+
+        private void AddBuildInCommands() {
             var help = new DevCommand("help", "show a list of commands", () => {
                 ShowHelp = true;
             });
@@ -25,11 +31,9 @@ namespace Avocado.DeveloperCheatConsole.Scripts.Core {
             var exit = new DevCommand("exit", "disable console", () => {
                 ShowConsole = false;
             });
-
-            _commands = new Collection<DevCommand> {
-                help,
-                exit
-            };    
+            
+            _commands.Add(help);
+            _commands.Add(exit);
         }
 
         public virtual void InvokeCommand(string commandInput) {
