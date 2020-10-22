@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace Avocado.DeveloperCheatConsole.Scripts.Visual {
     public abstract class DevConsoleGUI : MonoBehaviour {
+        [SerializeField]
+        [Range(0.1f, 2f)]
+        protected float Scale = 1f;
         protected DeveloperConsole _console;
         
         protected string _input;
@@ -57,22 +60,23 @@ namespace Avocado.DeveloperCheatConsole.Scripts.Visual {
             
             HadnleKeyboardInGUI();
 
-            var inputHeight = 100;
+            var inputHeight = 100 * Scale;
             var y = Screen.height - inputHeight;
 
             if (_console.ShowHelp) {
                 ShowHelp(y);
             }
 
-            GUI.Box(new Rect(0, y, Screen.width, 100), "");
+            GUI.Box(new Rect(0, y, Screen.width, 100 * Scale), "");
             GUI.backgroundColor = Color.black;
             
             var labelStyle = new GUIStyle("TextField");
             labelStyle.fontStyle = FontStyle.Normal;
-            labelStyle.fontSize = 40;
+            var fontSize = 40 * Scale;
+            labelStyle.fontSize = (int)fontSize;
             labelStyle.alignment = TextAnchor.MiddleLeft;
             GUI.SetNextControlName("inputField");
-            _input = GUI.TextField(new Rect(10f, y + 10f, Screen.width - 20, 70f), _input, labelStyle);
+            _input = GUI.TextField(new Rect(10f, y + 10f, Screen.width - 20, 70f * Scale), _input, labelStyle);
 
             SetFocusTextField();
         }
@@ -86,18 +90,19 @@ namespace Avocado.DeveloperCheatConsole.Scripts.Visual {
         }
 
         private void ShowHelp(float y) {
-            GUI.Box(new Rect(0, y - 500, Screen.width, 500), "");
-            var viewPort = new Rect(0, 0, Screen.width - 30, 80 * _console.Commands.Count);
-            _scroll = GUI.BeginScrollView(new Rect(0, y - 480f, Screen.width, 480), _scroll, viewPort);
+            GUI.Box(new Rect(0, y - 500 * Scale, Screen.width, 500* Scale), "");
+            var viewPort = new Rect(0, 0, Screen.width - 30, 80 * _console.Commands.Count * Scale);
+            _scroll = GUI.BeginScrollView(new Rect(0, y - 480f * Scale, Screen.width, 480 * Scale), _scroll, viewPort);
              
             for (int i = 0; i < _console.Commands.Count; i++) {
                 var command = _console.Commands[i];
                 var label = $"{command.Id} - {command.Description}";
-                var labelRect = new Rect(10, 50*i, viewPort.width-100, 50);
+                var labelRect = new Rect(10, 50 * i * Scale, viewPort.width-100, 50 * Scale);
                     
                 var labelStyleHelp = new GUIStyle("label");
                 labelStyleHelp.fontStyle = FontStyle.Normal;
-                labelStyleHelp.fontSize = 30;
+                var fontSize = 30 * Scale;
+                labelStyleHelp.fontSize = (int)fontSize;
                     
                 GUI.Label(labelRect, label, labelStyleHelp);
             }
