@@ -1,9 +1,12 @@
 using UnityEngine;
+#if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
+#endif
 
 namespace Avocado.DeveloperCheatConsole.Scripts.Visual {
     public class DevConsoleGuiNewInputSystem : DevConsoleGUI {
         private void Update() {
+#if ENABLE_INPUT_SYSTEM
             var keyboard = Keyboard.current;
             if (keyboard.backquoteKey.wasPressedThisFrame) {
                 if (!_console.ShowConsole) {
@@ -22,6 +25,7 @@ namespace Avocado.DeveloperCheatConsole.Scripts.Visual {
                 _input = _console.GetBufferCommand(true);
                 GUI.FocusControl("inputField");
             }
+#endif
         }
     }
 }
