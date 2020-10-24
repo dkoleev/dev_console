@@ -5,12 +5,12 @@ namespace Avocado.DeveloperCheatConsole.Scripts.Core.Commands {
     public class DevCommand {
         public string Id { get; }
         public string Description { get; }
-        
-        public Action _command;
-        public Action<string> _commandStr;
-        public Action<List<string>> _commandListStr;
-        public Action<List<int>> _commandListInt;
-        public Action<int> _commandInt;
+
+        public Action Command { get; private set; }
+        public Action<string> CommandStr { get; private set; }
+        public Action<List<string>> CommandListStr { get; private set; }
+        public Action<List<int>> CommandListInt { get; private set; }
+        public Action<int> CommandInt { get; private set; }
 
         private DevCommand(string commandId, string commandDescription) {
             Id = commandId;
@@ -18,43 +18,43 @@ namespace Avocado.DeveloperCheatConsole.Scripts.Core.Commands {
         }
 
         public DevCommand(string commandId, string commandDescription, Action command) : this(commandId, commandDescription) {
-            _command = command;
+            Command = command;
         }
         
         public DevCommand(string commandId, string commandDescription, Action<string> command) : this(commandId, commandDescription) {
-            _commandStr = command;
+            CommandStr = command;
         }
         
         public DevCommand(string commandId, string commandDescription, Action<int> command) : this(commandId, commandDescription) {
-            _commandInt = command;
+            CommandInt = command;
         }
         
         public DevCommand(string commandId, string commandDescription, Action<List<string>> command) : this(commandId, commandDescription) {
-            _commandListStr = command;
+            CommandListStr = command;
         }
         
         public DevCommand(string commandId, string commandDescription, Action<List<int>> command) : this(commandId, commandDescription) {
-            _commandListInt = command;
+            CommandListInt = command;
         }
 
         public void Invoke() {
-            _command.Invoke();
+            Command.Invoke();
         }
         
         public void Invoke(string parameter) {
-            _commandStr.Invoke(parameter);
+            CommandStr.Invoke(parameter);
         }
         
         public void Invoke(int parameter) {
-            _commandInt.Invoke(parameter);
+            CommandInt.Invoke(parameter);
         }
         
         public void Invoke(List<string> parameters) {
-            _commandListStr.Invoke(parameters);
+            CommandListStr.Invoke(parameters);
         }
         
         public void Invoke(List<int> parameters) {
-            _commandListInt.Invoke(parameters);
+            CommandListInt.Invoke(parameters);
         }
     }
 }

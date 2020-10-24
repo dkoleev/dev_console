@@ -14,7 +14,7 @@ namespace Avocado.DeveloperCheatConsole.Scripts.Visual {
         
         private void Awake() {
 #if UNITY_EDITOR
-            _console = new DeveloperConsole();
+            _console = DeveloperConsole.Instance;
             GenerateCommands();
 #endif
         }
@@ -93,9 +93,9 @@ namespace Avocado.DeveloperCheatConsole.Scripts.Visual {
             GUI.Box(new Rect(0, y - 500 * Scale, Screen.width, 500* Scale), "");
             var viewPort = new Rect(0, 0, Screen.width - 30, 80 * _console.Commands.Count * Scale);
             _scroll = GUI.BeginScrollView(new Rect(0, y - 480f * Scale, Screen.width, 480 * Scale), _scroll, viewPort);
-             
-            for (int i = 0; i < _console.Commands.Count; i++) {
-                var command = _console.Commands[i];
+
+            int i = 0;
+            foreach (var command in _console.Commands) {
                 var label = $"{command.Id} - {command.Description}";
                 var labelRect = new Rect(10, 50 * i * Scale, viewPort.width-100, 50 * Scale);
                     
@@ -105,6 +105,8 @@ namespace Avocado.DeveloperCheatConsole.Scripts.Visual {
                 labelStyleHelp.fontSize = (int)fontSize;
                     
                 GUI.Label(labelRect, label, labelStyleHelp);
+                
+                i++;
             }
                 
             GUI.EndScrollView();

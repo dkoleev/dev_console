@@ -1,26 +1,36 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Avocado.DeveloperCheatConsole.Scripts.Core.Commands;
 
 namespace Avocado.DeveloperCheatConsole.Scripts.Core {
     public class DeveloperConsole {
+        public static DeveloperConsole Instance {
+            get {
+                if (_instance is null) {
+                    _instance = new DeveloperConsole();
+                }
+
+                return _instance;
+            }
+        }
+
+        private static DeveloperConsole _instance;
+
         public IList<DevCommand> Commands => _commands;
         public bool ShowConsole { get; set; }
         public bool ShowHelp { get; set; }
         
-        private IList<DevCommand> _commands;
+        private  IList<DevCommand> _commands = new List<DevCommand>();
         private IList<string> _commandsBuffer = new List<string>();
         private int _currentIndexBufferCommand;
         
-        public DeveloperConsole() {
-            GenerateBuildInCommands();
+        private DeveloperConsole() {
+            AddBuildInCommands();
         }
 
-        private void GenerateBuildInCommands() {
-            var allCommands = new AllCommands();
-            _commands = allCommands.GenerateCommands();
-            AddBuildInCommands();
+        public void AddCommand(DevCommand command) {
+            _commands.Add(command);
         }
 
         private void AddBuildInCommands() {
@@ -32,8 +42,8 @@ namespace Avocado.DeveloperCheatConsole.Scripts.Core {
                 ShowConsole = false;
             });
             
-            _commands.Add(help);
-            _commands.Add(exit);
+            AddCommand(help);
+            AddCommand(exit);
         }
 
         public virtual void InvokeCommand(string commandInput) {
@@ -47,23 +57,41 @@ namespace Avocado.DeveloperCheatConsole.Scripts.Core {
                     continue;
                 }
 
-                if (parameters.Count == 0) {
+                if (parameters.Count == 0 && command.Command != null) {
                     command.Invoke();
                     success = true;
-                }else if (parameters.Count == 1) {
+                    break;
+                }
+                if (parameters.Count == 1) {
                     if (int.TryParse(parameters[0], out int resultInt)) {
+                        if (command.CommandInt is null) {
+                            continue;
+                        } 
+                        
                         command.Invoke(resultInt);
-                    } else {
+                        success = true;
+                        break;
+                    }
+                    if(command.CommandStr != null) {
                         command.Invoke(parameters[0]);
+                        success = true;
+                        break;
                     }
-                    success = true;
-                } else {
-                    if (parameters.TrueForAll(value => int.TryParse(value, out int intValue))) {
-                        command.Invoke(parameters.Select(int.Parse).ToList());
-                    } else {
-                        command.Invoke(parameters);
+                } 
+                if (parameters.Count > 1 && parameters.TrueForAll(value => int.TryParse(value, out int intValue))) {
+                    if (command.CommandListInt is null) {
+                        continue;
                     }
+
+                    command.Invoke(parameters.Select(int.Parse).ToList());
                     success = true;
+                    break;
+                }
+
+                if (parameters.Count > 1 && command.CommandListStr != null) {
+                    command.Invoke(parameters);
+                    success = true;
+                    break;
                 }
             }
             
